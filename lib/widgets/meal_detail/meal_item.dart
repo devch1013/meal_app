@@ -1,19 +1,29 @@
-import '../screens/meal_detail_screen.dart';
+import '../../screens/meal_detail_screen.dart';
 
-import '../models/meal.dart';
+import '../../models/meal.dart';
 import 'package:flutter/material.dart';
 
 class MealItem extends StatelessWidget {
   final Meal meal;
+  final Function removeItem;
 
   void selectMeal(BuildContext context) {
-    Navigator.of(context).pushNamed(
+    Navigator.of(context)
+        .pushNamed(
       MealDetailScreen.routeName,
       arguments: meal,
+    )
+        .then(
+      (result) {
+        if (result != null) {
+          removeItem(result);
+        }
+      },
     );
   }
 
-  const MealItem({Key? key, required this.meal}) : super(key: key);
+  const MealItem({Key? key, required this.meal, required this.removeItem})
+      : super(key: key);
 
   String get ComplexityText {
     switch (meal.complexity) {

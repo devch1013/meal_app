@@ -1,28 +1,64 @@
-import '../widgets/meal_item.dart';
+import '../widgets/meal_detail/meal_item.dart';
 import 'package:flutter/material.dart';
 import '../dummy_data.dart';
+import '../models/meal.dart';
 
-class CategoryMealsScreen extends StatelessWidget {
+class CategoryMealsScreen extends StatefulWidget {
   static const routeName = '/category-meals';
+
+  final List<Meal> availableMeals;
+
+  CategoryMealsScreen(this.availableMeals);
+
+  @override
+  State<CategoryMealsScreen> createState() => _CategoryMealsScreenState();
+}
+
+class _CategoryMealsScreenState extends State<CategoryMealsScreen> {
+  late String categoryTitle;
+  late List<Meal> displayedMeals;
+  var _loadedInitData = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (!_loadedInitData) {
+      final routeArgs =
+          ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+      categoryTitle = routeArgs['title'] as String;
+      final categoryId = routeArgs['id'];
+      displayedMeals = widget.availableMeals
+          .where((meal) => meal.categories.contains(categoryId))
+          .toList();
+      super.didChangeDependencies();
+      _loadedInitData = true;
+    }
+  }
+
+  void _removeMeal(String mealId) {
+    setState(() {
+      displayedMeals.removeWhere((meal) => meal.id == mealId);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final routeArgs =
-        ModalRoute.of(context)!.settings.arguments as Map<String, String>;
-    final categoryTitle = routeArgs['title'];
-    final categoryId = routeArgs['id'];
-    final categoryMeals = DUMMY_MEALS
-        .where((meal) => meal.categories.contains(categoryId))
-        .toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(categoryTitle as String),
       ),
       body: ListView.builder(
         itemBuilder: (ctx, index) {
-          return MealItem(meal: categoryMeals[index]);
+          return MealItem(
+            meal: displayedMeals[index],
+            removeItem: _removeMeal,
+          );
         },
-        itemCount: categoryMeals.length,
+        itemCount: displayedMeals.length,
       ),
     );
   }
