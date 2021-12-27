@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 class MealItem extends StatelessWidget {
   final Meal meal;
-  final Function removeItem;
 
   void selectMeal(BuildContext context) {
     Navigator.of(context)
@@ -15,15 +14,12 @@ class MealItem extends StatelessWidget {
     )
         .then(
       (result) {
-        if (result != null) {
-          removeItem(result);
-        }
+        if (result != null) {}
       },
     );
   }
 
-  const MealItem({Key? key, required this.meal, required this.removeItem})
-      : super(key: key);
+  const MealItem({Key? key, required this.meal}) : super(key: key);
 
   String get ComplexityText {
     switch (meal.complexity) {
